@@ -44,7 +44,8 @@ ARG user
 WORKDIR $container_project_path
 
 # adding user
-RUN useradd -G www-data,root -u $uid -d /home/$user $user
+# thêm user
+RUN id -u $user || useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
 
