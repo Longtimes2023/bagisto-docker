@@ -1,7 +1,7 @@
 # main image
 FROM php:8.3-apache
 
-# Install dependencies
+# installing dependencies
 RUN apt-get update && apt-get install -y \
     git \
     ffmpeg \
@@ -13,19 +13,15 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     libxpm-dev \
     libzip-dev \
-    libonig-dev \
-    libxml2-dev \
-    libcurl4-openssl-dev \
-    unzip \   # Thêm đúng cách vào đây để cài đặt unzip
-    zlib1g-dev \
-    curl
+    unzip \
+    zlib1g-dev
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd
+# configuring php extension
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
+RUN docker-php-ext-configure intl
 
-RUN docker-php-ext-configure intl \
-    && docker-php-ext-install bcmath calendar exif gmp intl mysqli pdo pdo_mysql mbstring xml curl zip
+# installing php extension
+RUN docker-php-ext-install bcmath calendar exif gd gmp intl mysqli pdo pdo_mysql zip
 
 # installing composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -62,15 +58,3 @@ RUN chown -R $user:www-data $container_project_path
 
 # changing user
 USER $user
-
-# Copy entrypoint script vào container
-COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
-
-# Đảm bảo file script có quyền thực thi
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Thiết lập entrypoint cho container
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-
-# Đảm bảo Apache được khởi động sau khi chạy entrypoint
-CMD ["apache2-foreground"]
