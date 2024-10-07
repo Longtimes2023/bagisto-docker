@@ -1,5 +1,5 @@
 services:
-  php-apache:
+  bagisto-php-apache:
     build:
       args:
         container_project_path: /var/www/html/
@@ -7,13 +7,13 @@ services:
         user: $USER
       context: .
       dockerfile: ./Dockerfile
-    image: php-apache
+    image: bagiso-php-apache
     ports:
       - 80:80
     volumes:
       - ./workspace/:/var/www/html/
 
-  mysql:
+  bagisto-mysql:
     image: mysql:8.3
     command: --default-authentication-plugin=mysql_native_password
     environment:
@@ -24,7 +24,7 @@ services:
     volumes:
       - ./.configs/mysql-data:/var/lib/mysql/
 
-  redis:
+  bagisto-redis:
     image: redis:6.2-alpine
     ports:
       - 6379:6379
@@ -32,17 +32,17 @@ services:
     volumes:
       - ./.configs/redis-data:/data
 
-  phpmyadmin:
+  bagisto-phpmyadmin:
     image: phpmyadmin:latest
     environment:
-      PMA_HOST: mysql
+      PMA_HOST: bagisto-mysql
       PMA_USER: root
       PMA_PASSWORD: root
       UPLOAD_LIMIT: 512M
     ports:
       - 8080:80
 
-  elasticsearch:
+  bagisto-elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:7.17.0
     environment:
       - xpack.security.enabled=false
@@ -62,16 +62,16 @@ services:
       - 9200:9200
       - 9300:9300
 
-  kibana:
+  bagisto-kibana:
     image: docker.elastic.co/kibana/kibana:7.17.0
     environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://bagisto-elasticsearch:9200
     ports:
       - 5601:5601
     depends_on:
-      - elasticsearch
+      - bagisto-elasticsearch
 
-  mailhog:
+  bagisto-mailhog:
       image: mailhog/mailhog
       logging:
           # Disable saving logs.
