@@ -1,5 +1,3 @@
-version: "3.1"
-
 services:
   php-apache:
     build:
@@ -9,7 +7,7 @@ services:
         user: $USER
       context: .
       dockerfile: ./Dockerfile
-    image: bagisto-php-apache
+    image: php-apache
     ports:
       - 80:80
     volumes:
@@ -37,7 +35,7 @@ services:
   phpmyadmin:
     image: phpmyadmin:latest
     environment:
-      PMA_HOST: bagisto-mysql
+      PMA_HOST: mysql
       PMA_USER: root
       PMA_PASSWORD: root
       UPLOAD_LIMIT: 512M
@@ -67,11 +65,11 @@ services:
   kibana:
     image: docker.elastic.co/kibana/kibana:7.17.0
     environment:
-      - ELASTICSEARCH_HOSTS=http://bagisto-elasticsearch:9200
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
     ports:
       - 5601:5601
     depends_on:
-      - bagisto-elasticsearch
+      - elasticsearch
 
   mailhog:
       image: mailhog/mailhog
