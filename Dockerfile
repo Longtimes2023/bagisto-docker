@@ -1,7 +1,7 @@
 # main image
 FROM php:8.3-apache
 
-# installing dependencies
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     git \
     ffmpeg \
@@ -13,22 +13,19 @@ RUN apt-get update && apt-get install -y \
     libwebp-dev \
     libxpm-dev \
     libzip-dev \
-    unzip \
+    libonig-dev \
+    libxml2-dev \
+    libcurl4-openssl-dev \
+    unzip \   # Thêm đúng cách vào đây để cài đặt unzip
     zlib1g-dev \
-    curl \
-    php-cli \
-    php-mbstring \
-    php-xml \
-    php-curl \
-    php-zip \
-    php-mysql
+    curl
 
-# configuring php extension
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
-RUN docker-php-ext-configure intl
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install gd
 
-# installing php extension
-RUN docker-php-ext-install bcmath calendar exif gd gmp intl mysqli pdo pdo_mysql mbstring xml curl zip
+RUN docker-php-ext-configure intl \
+    && docker-php-ext-install bcmath calendar exif gmp intl mysqli pdo pdo_mysql mbstring xml curl zip
 
 # installing composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
