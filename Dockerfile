@@ -14,14 +14,21 @@ RUN apt-get update && apt-get install -y \
     libxpm-dev \
     libzip-dev \
     unzip \
-    zlib1g-dev
+    zlib1g-dev \
+    curl \
+    php-cli \
+    php-mbstring \
+    php-xml \
+    php-curl \
+    php-zip \
+    php-mysql
 
 # configuring php extension
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg --with-webp
 RUN docker-php-ext-configure intl
 
 # installing php extension
-RUN docker-php-ext-install bcmath calendar exif gd gmp intl mysqli pdo pdo_mysql zip
+RUN docker-php-ext-install bcmath calendar exif gd gmp intl mysqli pdo pdo_mysql mbstring xml curl zip
 
 # installing composer
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
@@ -44,7 +51,6 @@ ARG user
 WORKDIR $container_project_path
 
 # adding user
-# thêm user
 RUN id -u $user || useradd -G www-data,root -u $uid -d /home/$user $user
 RUN mkdir -p /home/$user/.composer && \
     chown -R $user:$user /home/$user
