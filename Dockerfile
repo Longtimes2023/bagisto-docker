@@ -65,3 +65,15 @@ RUN chown -R $user:www-data $container_project_path
 
 # changing user
 USER $user
+
+# Copy entrypoint script vào container
+COPY ./entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Đảm bảo file script có quyền thực thi
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Thiết lập entrypoint cho container
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Đảm bảo Apache được khởi động sau khi chạy entrypoint
+CMD ["apache2-foreground"]
